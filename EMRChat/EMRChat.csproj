@@ -4,4 +4,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="ApplicationType.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ApplicationType.cs" />
+  </ItemGroup>
+
 </Project>

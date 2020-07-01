@@ -25,6 +25,13 @@ namespace EMRChat.Models
 
         public HashSet<string> ConnectionIds { get; set; } = new HashSet<string>();
 
-        public override string ToString() => $"{PracticeId}_{UserId}_{(int)ApplicationType}";
+        public string UserIdentifier => $"{PracticeId}_{UserId}_{(int)ApplicationType}";
+
+        public bool IsUserValid()
+        {
+            return PracticeId != default && UserId != default && ApplicationType != default;
+        }
+
+        //public override string ToString() => $"{PracticeId}_{UserId}_{(int)ApplicationType}";
     }
 }

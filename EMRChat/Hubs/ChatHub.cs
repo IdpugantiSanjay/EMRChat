@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,11 +10,29 @@ using System.Text.Json.Serialization;
 using System.Security.Claims;
 using System.Collections.Concurrent;
 
+using System.IO;
+
 namespace EMRChat.Hubs
 {
+
+    public static class Users
+    {
+
+    }
+
+
+
+    public class MessageHandler
+    {
+
+    }
+
+
+
     public class ChatHub : Hub
     {
 
+        
         /// Step 1: Connect
         ///     Save ConnectionId and 
         ///     UserId filter
@@ -44,6 +61,7 @@ namespace EMRChat.Hubs
             var connectionUser = JsonSerializer.Deserialize<User>(userInfo);
             connectionUser.ConnectionIds.Add(Context.ConnectionId);
             var practiceId = int.Parse(Context.UserIdentifier.Split("_").First());
+
 
             if (connectedUsers.TryGetValue(practiceId, out ConcurrentDictionary<string, User> practiceUsers))
             {
