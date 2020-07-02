@@ -11,7 +11,7 @@ namespace EMRChat.Hubs
     {
         private readonly ConcurrentDictionary<int, ConcurrentDictionary<string, User>> connectedUsers = new ConcurrentDictionary<int, ConcurrentDictionary<string, User>>();
 
-        private static object userLock = new object();
+        private object userLock = new object();
 
         public void AddConnectedUser(User connectedUser, HubCallerContext context)
         {

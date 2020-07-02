@@ -20,8 +20,8 @@ namespace EMRChat.Tests
                 ApplicationType = ApplicationType.Ehr,
                 UserId = 42,
                 PracticeId = 36,
-                ConnectionIds = new HashSet<string> { connectionId }
             };
+            user.AddConnection(connectionId);
 
             string userIdentifier = user.UserIdentifier;
 
@@ -40,9 +40,9 @@ namespace EMRChat.Tests
                 ApplicationType = ApplicationType.Ehr,
                 UserId = 42,
                 PracticeId = 36,
-                ConnectionIds = new HashSet<string> { connectionId }
             };
 
+            user.AddConnection(connectionId);
             Assert.False(userHandler.IsUserConnected(user));
         }
 
@@ -57,16 +57,18 @@ namespace EMRChat.Tests
                 ApplicationType = ApplicationType.Ehr,
                 UserId = 42,
                 PracticeId = 36,
-                ConnectionIds = new HashSet<string> { connectionId }
             };
+            user.AddConnection(connectionId);
 
+            string otherPracticeUserConnectionId = Guid.NewGuid().ToString();
             User otherPracticeUser = new User()
             {
                 ApplicationType = ApplicationType.Ehr,
                 UserId = 42,
                 PracticeId = 103,
-                ConnectionIds = new HashSet<string> { connectionId }
             };
+            otherPracticeUser.AddConnection(otherPracticeUserConnectionId);
+
             string userIdentifier = otherPracticeUser.UserIdentifier;
 
             userHandler.AddConnectedUser(otherPracticeUser, new HubContextStub(connectionId, userIdentifier));

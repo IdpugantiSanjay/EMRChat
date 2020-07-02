@@ -23,7 +23,7 @@ namespace EMRChat.Models
 
         public string Username { get; set; }
 
-        public HashSet<string> ConnectionIds { get; set; } = new HashSet<string>();
+        public HashSet<string> ConnectionIds { get; private set; }
 
         public string UserIdentifier => $"{PracticeId}_{UserId}_{(int)ApplicationType}";
 
@@ -32,6 +32,10 @@ namespace EMRChat.Models
             return PracticeId != default && UserId != default && ApplicationType != default;
         }
 
-        //public override string ToString() => $"{PracticeId}_{UserId}_{(int)ApplicationType}";
+        public void AddConnection(string connectionId)
+        {
+            ConnectionIds ??= new HashSet<string>() {  };
+            ConnectionIds.Add(connectionId);
+        }
     }
 }
