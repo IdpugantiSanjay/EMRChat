@@ -7,6 +7,8 @@ From Practice
 <input type="text" id="practiceId" value="36" />
 From User
 <input type="text" id="userId" value="42" />
+From User Name
+<input type="text" id="userName" value="Joel Alexander" />
 From Application type
 <input type="text" id="applicationType" value="1" />
 
@@ -16,6 +18,8 @@ To Practice
 <input type="text" id="toPracticeId" value="36" />
 To User
 <input type="text" id="toUserId" value="103" />
+TO User Name
+<input type="text" id="toUserName" value="Cicly Saunders" />
 To Application type
 <input type="text" id="toApplicationType" value="1" />
 
@@ -54,6 +58,9 @@ To Application type
 
 
 <button id="initializeConnection">Initialize Connection</button>
+<button id="onlineUsers">Get Online Users</button>
+
+
 
 <script>
     "use strict";
@@ -63,14 +70,15 @@ To Application type
     document.getElementById('initializeConnection').addEventListener('click', function () {
 
         var fromUser = {
-            practiceId: document.getElementById("practiceId").value,
-            userId: document.getElementById("userId").value,
-            applicationType: document.getElementById("applicationType").value,
+            PracticeId: Number(document.getElementById("practiceId").value),
+            UserId: Number(document.getElementById("userId").value),
+            ApplicationType: Number(document.getElementById("applicationType").value),
+            Username: document.getElementById("userName").value,
         }
 
 
         connection = new signalR.HubConnectionBuilder()
-            .withUrl(`https://localhost:44302/chatHub?practiceId=${fromUser.practiceId}&userId=${fromUser.userId}&applicationType=${fromUser.applicationType}`, {
+            .withUrl(`https://localhost:44302/chatHub?practiceId=${fromUser.PracticeId}&UserId=${fromUser.UserId}&applicationType=${fromUser.ApplicationType}`, {
                 skipNegotiation: true,
                 transport: signalR.HttpTransportType.WebSockets
             })
@@ -78,7 +86,7 @@ To Application type
 
         connection.on("OnTextMessage", function (message) {
             alert('Message Recieved')
-            var encodedMsg = JSON.parse(message);
+            var encodedMsg = message;
             var li = document.createElement("li");
             li.textContent = encodedMsg;
             document.getElementById("messagesList").appendChild(li);
@@ -86,7 +94,7 @@ To Application type
 
 
         connection.on("OnUserConnected", function (payload) {
-            var connectedUser = JSON.parse(payload)
+            var connectedUser = payload;
             var li = document.createElement("li");
             li.textContent = connectedUser;
             document.getElementById('connectedUsersList').appendChild(li);
@@ -103,14 +111,6 @@ To Application type
             });
     })
 
-
-    // '/chat?sessionId=455aef9f-be8e-4384-94bd-52eeb175d074');
-
-
-
-
-
-
     document.getElementById("sendButton").addEventListener("click", function (event) {
         // var user = document.getElementById("userInput").value;
         // var message = document.getElementById("messageInput").value;
@@ -120,12 +120,14 @@ To Application type
             PracticeId: Number(document.getElementById("practiceId").value),
             UserId: Number(document.getElementById("userId").value),
             ApplicationType: Number(document.getElementById("applicationType").value),
+            Username: document.getElementById("userName").value,
         }
 
         var ToUser = {
             PracticeId: Number(document.getElementById("toPracticeId").value),
             UserId: Number(document.getElementById("toUserId").value),
             ApplicationType: Number(document.getElementById("toApplicationType").value),
+            Username: document.getElementById("toUserName").value,
         }
 
         var chatInfo = { FromUser, ToUser }
@@ -149,9 +151,29 @@ To Application type
         // };
         connection.invoke("OnTextMessage", JSON.stringify(chatInfo)).catch(function (err) {
             alert(err.toString())
+			
+			
             return console.error(err.toString());
         });
     });
+
+    document.getElementById('onlineUsers').addEventListener('click', function () {
+        var FromUser = {
+            PracticeId: Number(document.getElementById("practiceId").value),
+            UserId: Number(document.getElementById("userId").value),
+            ApplicationType: Number(document.getElementById("applicationType").value),
+            Username: document.getElementById("userName").value,
+        }
+
+        connection.invoke("UsersList", JSON.stringify(FromUser)).then(function (UsersList) {
+UsersList.map(x=> x.username).forEach(name=>console.log(name))
+        }).catch(function (err) {
+            alert(err.toString())
+            return console.error(err.toString());
+        });
+
+    });
+
 
 
 </script>

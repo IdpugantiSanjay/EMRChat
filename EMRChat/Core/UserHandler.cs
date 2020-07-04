@@ -9,16 +9,16 @@ namespace EMRChat.Hubs
 {
     public class UserHandler
     {
-        private readonly ConcurrentDictionary<int, ConcurrentDictionary<string, User>> connectedUsers = new ConcurrentDictionary<int, ConcurrentDictionary<string, User>>();
+        private static readonly ConcurrentDictionary<int, ConcurrentDictionary<string, User>> connectedUsers = new ConcurrentDictionary<int, ConcurrentDictionary<string, User>>();
 
         private object userLock = new object();
 
         public void AddConnectedUser(User connectedUser, HubCallerContext context)
         {
             connectedUser.ConnectionIds.Add(context.ConnectionId);
-            var practiceId = int.Parse(context.UserIdentifier.Split("_").First());
+           // var practiceId = int.Parse(context.UserIdentifier.Split("_").First());
 
-            if (connectedUsers.TryGetValue(practiceId, out ConcurrentDictionary<string, User> practiceUsers))
+            if (connectedUsers.TryGetValue(connectedUser.PracticeId, out ConcurrentDictionary<string, User> practiceUsers))
             {
                 if (practiceUsers.TryGetValue(context.UserIdentifier, out User _connectedUser))
                 {
@@ -35,10 +35,9 @@ namespace EMRChat.Hubs
             else
             {
                 practiceUsers = new ConcurrentDictionary<string, User>() { [context.UserIdentifier] = connectedUser };
-                connectedUsers.TryAdd(practiceId, practiceUsers);
+                connectedUsers.TryAdd(connectedUser.PracticeId, practiceUsers);
             }
         }
-
         public IEnumerable<string> UserIdsToNotify(User user)
         {
             return connectedUsers[user.PracticeId]
@@ -63,6 +62,13 @@ namespace EMRChat.Hubs
             }
         }
 
+        public IEnumerable<User> UsersList(User user) {
+            return connectedUsers[user.PracticeId]
+                    .Where(x => x.Key != user.UserIdentifier)
+                    .Select(x => x.Value);
+        }
+
+
         public bool IsUserConnected(User user)
         {
             if (!connectedUsers.ContainsKey(user.PracticeId))
@@ -72,5 +78,8 @@ namespace EMRChat.Hubs
             connectedUsers[user.PracticeId].TryGetValue(user.UserIdentifier.ToString(), out User connectedUser);
             return connectedUser != null;
         }
+
+
+
     }
 }
