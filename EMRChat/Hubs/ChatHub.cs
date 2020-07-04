@@ -42,6 +42,14 @@ namespace EMRChat.Hubs
         {
             var deserializedChatInfo = JsonSerializer.Deserialize<ChatInfo>(chatInfo);
 
+
+            await Clients.User(deserializedChatInfo.ToUser.UserIdentifier).SendAsync("OnTextMessage", chatInfo);
+        }
+
+        public async Task OnDocumentstMessage(string chatInfo)
+        {
+            var deserializedChatInfo = JsonSerializer.Deserialize<ChatInfo>(chatInfo);
+
             await Clients.User(deserializedChatInfo.ToUser.UserIdentifier).SendAsync("OnTextMessage", chatInfo);
         }
 
